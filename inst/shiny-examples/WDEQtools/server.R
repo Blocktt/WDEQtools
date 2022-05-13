@@ -134,7 +134,7 @@ shinyServer(function(input, output, session) {
             sink(file_sink, type = "message", append = TRUE)
 
             # Log
-            message("Results Log from IDEMtools Shiny App")
+            message("Results Log from WDEQtools Shiny App")
             message(Sys.time())
             inFile <- input$fn_input
             message(paste0("file = ", inFile$name))
@@ -152,24 +152,6 @@ shinyServer(function(input, output, session) {
             if (is.null(df_data)){
                 return(NULL)
             }
-
-            # QC, FFG symbols
-            # FFG_approved <- c("CG", "CF", "PR", "SC", "SH")
-            # df_QC <- df_data
-            # df_QC[df_QC==""] <- NA
-            #
-            #
-            # N_FFG_wrong <- sum((na.omit(df_QC$FFG) %in% FFG_approved) == 0)
-            # if(N_FFG_wrong>0){
-            #     message(paste0(N_FFG_wrong, "taxa have the incorrect FFG descriptor, please use the following:"))
-            #     message("Replace 'Collector' with 'CG'")
-            #     message("Replace 'Filterer' with 'CF'")
-            #     message("Replace 'Predator' with 'PR'")
-            #     message("Replace 'Scraper' with 'SC'")
-            #     message("Replace 'Shredder' with 'SH'")
-            #     message("Failure to change FFG to correct coding scheme will result in incorrect metric calculations")
-            # }
-
 
             # QC, N_TAXA = 0
             N_Taxa_zeros <- sum(df_data$N_TAXA == 0, na.rm = TRUE)
@@ -728,7 +710,7 @@ shinyServer(function(input, output, session) {
         sink(file_sink, type = "message", append = TRUE)
 
         # Log
-        message("Results Log from IDEMtools Site Class Identifier")
+        message("Results Log from WDEQtools Site Class Identifier")
         message(Sys.time())
         inFile <- input$fn_input_siteclass
         message(paste0("file = ", inFile$name))
