@@ -10,9 +10,6 @@
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
 
-    # map and plots require df_metsc
-    map_data <- reactiveValues(df_metsc = NULL)
-
     # Misc Names ####
     output$fn_input_display <- renderText({input$fn_input}) ## renderText~END
 
@@ -29,7 +26,7 @@ shinyServer(function(input, output, session) {
         inFile <- input$fn_input
 
         shiny::validate(
-            need(inFile != "", "Please select a data set") # used to inform the user that a data set is required
+            need(inFile != "", "Please upload a data set") # used to inform the user that a data set is required
         )
 
         if (is.null(inFile)){
@@ -44,25 +41,30 @@ shinyServer(function(input, output, session) {
         required_columns <- c("INDEX_NAME"
                               ,"INDEX_REGION"
                               ,"STATIONID"
-                              ,"BFI"
-                              ,"LAT"
-                              ,"LONG"
-                              ,"COLLDATE"
                               ,"SAMPLEID"
-                              ,"TAXAID"
+                              ,"COLLDATE"
+                              ,"N_TAXA"
                               ,"EXCLUDE"
                               ,"NONTARGET"
-                              ,"N_TAXA"
+                              ,"TAXAID"
                               ,"ORDER"
                               ,"FAMILY"
-                              ,"GENUS"
+                              ,"H_WDEQ"
+                              ,"O_WDEQ"
+                              ,"T_WDEQ"
+                              ,"DIATAS_TN"
                               ,"BC_USGS"
-                              ,"PT_USGS"
-                              ,"O_USGS"
-                              ,"SALINITY_USGS"
-                              ,"P_USGS"
-                              ,'N_USGS'
-                              ,"TOLVAL")
+                              ,"SALINITY_USGS_NUM"
+                              ,"LAT"
+                              ,"LONG"
+                              ,"Elevation"
+                              ,"BFIWs"
+                              ,"SWs"
+                              ,"KffactWs"
+                              ,"PrecipWs"
+                              ,"TmaxWs"
+                              ,"TmeanWs"
+                              ,"RckDepWs")
 
         column_names <- colnames(df_input)
 
@@ -159,6 +161,22 @@ shinyServer(function(input, output, session) {
                 message("Some taxa in your dataset have a count (N_TAXA) of zero. Values for TAXAID with N_TAXA = 0 will be removed before calculations.")
             }
 
+            # QC, predictors = NA
+            Elevation_NA <- sum(is.na(df_data$Elevation))
+            BFIWs_NA <- sum(is.na(df_data$BFIWs))
+            SWs_NA <- sum(is.na(df_data$SWs))
+            KffactWs_NA <- sum(is.na(df_data$KffactWs))
+            PrecipWs_NA <- sum(is.na(df_data$PrecipWs))
+            TmaxWs_NA <- sum(is.na(df_data$TmaxWs))
+            TmeanWs_NA <- sum(is.na(df_data$TmeanWs))
+            RckDepWs_NA <- sum(is.na(df_data$RckDepWs))
+
+            Predictor_NA <- sum(Elevation_NA, BFIWs_NA, SWs_NA, KffactWs_NA
+                                , PrecipWs_NA, TmaxWs_NA, TmeanWs_NA, RckDepWs_NA)
+            if(Predictor_NA>0){
+              message("Some sites in your dataset have missing predictor values. Index scores will be incorrect without COMPLETE predictor values.")
+            }
+
             # QC, Exclude as TRUE/FALSE
             Exclude.T <- sum(df_data$EXCLUDE==TRUE, na.rm=TRUE)
             if(Exclude.T==0){##IF.Exclude.T.START
@@ -179,6 +197,29 @@ shinyServer(function(input, output, session) {
             # convert Field Names to UPPER CASE
             names(df_data) <- toupper(names(df_data))
 
+            # Reformat dataset ####
+            df_reformat <- df_data %>%
+              mutate(SALINITY_USGS = case_when((H_WDEQ == 1) ~ "SALINITY_1"
+                                               , (H_WDEQ == 2) ~ "SALINITY_2"
+                                               , (H_WDEQ == 3) ~ "SALINITY_3"
+                                               , (H_WDEQ == 4) ~ "SALINITY_4")) %>%
+              select(-c(H_WDEQ)) %>%
+              mutate(TROPHIC_USGS = case_when((T_WDEQ == 1) ~ "TROPHIC_1"
+                                              , (T_WDEQ == 2) ~ "TROPHIC_2"
+                                              , (T_WDEQ == 3) ~ "TROPHIC_3"
+                                              , (T_WDEQ == 4) ~ "TROPHIC_4"
+                                              , (T_WDEQ == 5) ~ "TROPHIC_5"
+                                              , (T_WDEQ == 6) ~ "TROPHIC_6"
+                                              , (T_WDEQ == 7) ~ "TROPHIC_7")) %>%
+              select(-c(T_WDEQ)) %>%
+              mutate(O_USGS = case_when((O_WDEQ == 1) ~ "O_1"
+                                        , (O_WDEQ == 2) ~ "O_2"
+                                        , (O_WDEQ == 3) ~ "O_3"
+                                        , (O_WDEQ == 4) ~ "O_4"
+                                        , (O_WDEQ == 5) ~ "O_5")) %>%
+              select(-c(O_WDEQ)) %>%
+              rename(POLL_TOL = SALINITY_USGS_NUM)
+
             # QC, Required Fields
             col.req <- c("INDEX_REGION","SAMPLEID","TAXAID","EXCLUDE","NONTARGET"
                          ,"N_TAXA","PHYLUM","ORDER","FAMILY","GENUS","BC_USGS"
@@ -188,119 +229,131 @@ shinyServer(function(input, output, session) {
                          ,"TOLVAL","DIATOM_ISA","DIAT_CL","POLL_TOL","BEN_SES"
                          ,"DIATAS_TP","DIATAS_TN","DIAT_COND","DIAT_CA","MOTILITY"
                          ,"NF")
-            col.req.missing <- col.req[!(col.req %in% toupper(names(df_data)))]
+            col.req.missing <- col.req[!(col.req %in% toupper(names(df_reformat)))]
 
             # Add missing fields
-            df_data[,col.req.missing] <- NA
+            df_reformat[,col.req.missing] <- NA
             warning(paste("Metrics related to the following fields are invalid:"
                           , paste(paste0("   ", col.req.missing), collapse="\n"), sep="\n"))
 
             # calculate values and scores in two steps using BioMonTools
             # save each file separately
 
-            # create long name version of Index Regions for client comprehension
+           # columns to keep
+            keep_cols <- c("STATIONID", "COLLDATE", "LAT", "LONG","Elevation"
+                           , "BFIWs", "SWs", "KffactWs", "PrecipWs", "TmaxWs", "TmeanWs"
+                           , "RckDepWs")
 
-            df_data$INDEX_REGION_LONG <- ifelse(df_data$INDEX_REGION == "HiN", "High_Lithologic_Nitrogen",
-                                                ifelse(df_data$INDEX_REGION == "LoN", "Low_Lithologic_Nitrogen",
-                                                                     "Unknown"))
+            # metric calculation ####
 
-            # columns to keep
-            keep_cols <- c("BFI", "LAT", "LONG", "STATIONID"
-                           , "COLLDATE", "INDEX_REGION_LONG")
-
-            # metric calculation
             df_metval <- suppressWarnings(
-              metric.values(fun.DF = df_data
+              metric.values(fun.DF = df_reformat
                             , fun.Community = "algae"
                             , fun.MetricNames = DiatomMetrics
                             , fun.cols2keep= keep_cols
                             , boo.Shiny = TRUE))
+
+            df_metval2 <- df_metval %>%
+              rename(pt_H_WDEQ_34 = pt_SALINITY_34
+                     , WA_Salinity_USGS = wa_POLL_TOL
+                     , nt_Diatas_TN_2 = nt_DIATAS_TN_2
+                     , pt_T_WDEQ_12 = pt_TROPHIC_12
+                     , pt_T_WDEQ_56 = pt_TROPHIC_56
+                     , pt_O_WDEQ_4 = pt_O_4
+                     , BFIWs = BFIWS
+                     , Elevation = ELEVATION
+                     , SWs = SWS
+                     , KffactWs = KFFACTWS
+                     , PrecipWs = PRECIPWS
+                     , TmaxWs = TMAXWS
+                     , TmeanWs = TMEANWS
+                     , RckDepWs = RCKDEPWS) %>%
+              mutate(BC_12.pa = pi_BC_12/100) %>% # return to proportion values
+              select(-c(pi_BC_12))
+
+            df_metval2$SAMPLEID <- as.character(df_metval2$SAMPLEID)
+
+            ## adjust metrics ####
+
+            pt_H_WDEQ_34_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### use forest to predict pt_H_WDEQ_34
+            pt_H_WDEQ_34_RFadj<-df_metval2[,"pt_H_WDEQ_34"] - pt_H_WDEQ_34_pred				##### calculate residual
+            df_metval2$pt_H_WDEQ_34_RFadj<-pt_H_WDEQ_34_RFadj
+
+            pt_T_WDEQ_56_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### pt_T_WDEQ_56_RFadj
+            pt_T_WDEQ_56_RFadj<-df_metval2[,"pt_T_WDEQ_56"] - pt_T_WDEQ_56_pred
+            df_metval2$pt_T_WDEQ_56_RFadj<-pt_T_WDEQ_56_RFadj
+
+            nt_Diatas_TN_2_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### nt_Diatas_TN_2_RFadj
+            nt_Diatas_TN_2_RFadj<-df_metval2[,"nt_Diatas_TN_2"] - nt_Diatas_TN_2_pred
+            df_metval2$nt_Diatas_TN_2_RFadj<-nt_Diatas_TN_2_RFadj
+
+            pt_T_WDEQ_12_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### pt_T_WDEQ_12_RFadj
+            pt_T_WDEQ_12_RFadj<-df_metval2[,"pt_T_WDEQ_12"] - pt_T_WDEQ_12_pred
+            df_metval2$pt_T_WDEQ_12_RFadj<-pt_T_WDEQ_12_RFadj
 
 
             # Increment the progress bar, and update the detail text.
             incProgress(1/n_inc, detail = "Metrics have been calculated!")
             Sys.sleep(1)
 
-            # Log
-            message(paste0("Chosen IBI from Shiny app = ", MMI))
-
-
             #
             # Save
             fn_metval <- file.path(".", "Results", "results_metval.csv")
-            write.csv(df_metval, fn_metval, row.names = FALSE)
-
-            #
-            # QC - upper case Index.Name
-            names(df_metval)[grepl("Index.Name"
-                                   , names(df_metval))] <- "INDEX.NAME"
-
+            write.csv(df_metval2, fn_metval, row.names = FALSE)
 
             # Increment the progress bar, and update the detail text.
             incProgress(1/n_inc, detail = "Adjust, Metrics")
-            Sys.sleep(0.50)
-
-            # Adjust diatom metrics according to BFI field
-
-            df_metval <- df_metval %>%
-              group_by(SAMPLEID) %>%
-              mutate(pt_BC_12_adj =
-                       ifelse(BFI < 30
-                              , pt_BC_12 - 10.5
-                              , pt_BC_12 - 15.1))
-
 
             # Increment the progress bar, and update the detail text.
             incProgress(1/n_inc, detail = "Calculate, Scores")
             Sys.sleep(0.50)
 
+            # metric scoring ####
+            # Decreasers
+            metricsDecreasers<-df_metval2[,c("SAMPLEID", decreasers)]
 
+            metricsDecreasers2<-data.frame(matrix(ncol = 5, nrow = dim(df_metval2)[1]))
+            colnames(metricsDecreasers2) <- c("SAMPLEID",paste0(decreasers,"_std"))
 
-            # Metric Scores
+            metricsDecreasers2[,1]<-metricsDecreasers$SAMPLEID
+            metricsDecreasers2[,2]<-100*(std_Parameters["ninetififth",names(metricsDecreasers)[2]] - metricsDecreasers$WA_Salinity_USGS)/(std_Parameters["ninetififth",names(metricsDecreasers)[2]] - std_Parameters["fifth",names(metricsDecreasers)[2]])
+            metricsDecreasers2[,3]<-100*(std_Parameters["ninetififth",names(metricsDecreasers)[3]] - metricsDecreasers$pt_O_WDEQ_4)/(std_Parameters["ninetififth",names(metricsDecreasers)[3]] - std_Parameters["fifth",names(metricsDecreasers)[3]])
+            metricsDecreasers2[,4]<-100*(std_Parameters["ninetififth",names(metricsDecreasers)[4]] - metricsDecreasers$pt_H_WDEQ_34_RFadj)/(std_Parameters["ninetififth",names(metricsDecreasers)[4]] - std_Parameters["fifth",names(metricsDecreasers)[4]])
+            metricsDecreasers2[,5]<-100*(std_Parameters["ninetififth",names(metricsDecreasers)[5]] - metricsDecreasers$pt_T_WDEQ_56_RFadj)/(std_Parameters["ninetififth",names(metricsDecreasers)[5]] - std_Parameters["fifth",names(metricsDecreasers)[5]])
 
-            # Thresholds
-            fn_thresh <- file.path(system.file(package="BioMonTools")
-                                   , "extdata", "MetricScoring.xlsx")
-            df_thresh_metric <- read_excel(fn_thresh, sheet="metric.scoring")
-            df_thresh_index <- read_excel(fn_thresh, sheet="index.scoring")
+            # Increasers
+            metricsIncreasers<-df_metval2[,c("SAMPLEID", increasers)]
 
-            # metrics for scores
+            metricsIncreasers2<-data.frame(matrix(ncol = 4, nrow = dim(df_metval2)[1]))
+            colnames(metricsIncreasers2) <- c("SAMPLEID",paste0(increasers,"_std"))
 
-            myMetrics <- c("nt_LOW_N"
-                           ,"nt_LOW_P"
-                           ,"pi_Tol_13"
-                           ,"pt_Achnan_Navic"
-                           ,"pt_BC_12_adj" # Calculated in app, not BioMonTools
-                           ,"pt_O_345"
-                           ,"pt_PT_12"
-                           ,"pt_SALINITY_34"
-                           ,"pt_Sens_810")# END myMetrics
+            metricsIncreasers2[,1]<-metricsIncreasers$SAMPLEID
+            metricsIncreasers2[,2]<-100*(metricsIncreasers$pt_T_WDEQ_12_RFadj - std_Parameters["fifth",names(metricsIncreasers)[2]])/(std_Parameters["ninetififth",names(metricsIncreasers)[2]] - std_Parameters["fifth",names(metricsIncreasers)[2]])
+            metricsIncreasers2[,3]<-100*(metricsIncreasers$nt_Diatas_TN_2_RFadj - std_Parameters["fifth",names(metricsIncreasers)[3]])/(std_Parameters["ninetififth",names(metricsIncreasers)[3]] - std_Parameters["fifth",names(metricsIncreasers)[3]])
+            metricsIncreasers2[,4]<-100*(metricsIncreasers$BC_12.pa - std_Parameters["fifth",names(metricsIncreasers)[4]])/(std_Parameters["ninetififth",names(metricsIncreasers)[4]] - std_Parameters["fifth",names(metricsIncreasers)[4]])
 
-            # run scoring code
-            df_metsc <- metric.scores(DF_Metrics = df_metval
-                                      , col_MetricNames = myMetrics
-                                      , col_IndexName = "INDEX_NAME"
-                                      , col_IndexRegion = "INDEX_REGION"
-                                      , DF_Thresh_Metric = df_thresh_metric
-                                      , DF_Thresh_Index = df_thresh_index
-                                      , col_ni_total = "ni_total")
+            # combine and truncate at 0 and 100
+            metrics_std <- left_join(metricsDecreasers2, metricsIncreasers2
+                                     , by = "SAMPLEID") %>%
+              mutate_if(is.numeric, funs(ifelse(.>100,100,.))) %>%
+              mutate_if(is.numeric, funs(ifelse(.<0,0,.)))
 
-            df_metsc <- df_metsc %>%
-              mutate(INDEX_REGION = replace(INDEX_REGION, INDEX_REGION == "HIN", "HiN")) %>%
-              mutate(INDEX_REGION = replace(INDEX_REGION, INDEX_REGION == "LON", "LoN"))
+            ## calculate index
+            metrics_std <- metrics_std %>%
+              mutate(Index_Score = rowMeans(select(., ends_with("_std")), na.rm = TRUE))
+
+            ## Final Table
+            df_metsc <- left_join(df_metval2, metrics_std
+                                  , by = "SAMPLEID")
 
 
             # Save
             fn_metsc <- file.path(".", "Results", "results_metsc.csv")
             write.csv(df_metsc, fn_metsc, row.names = FALSE)
 
-            # MAP and Plot requires df_metsc
-            map_data$df_metsc <- df_metsc
-
-
             # Increment the progress bar, and update the detail text.
-            incProgress(1/n_inc, detail = "Create, summary report (~ 20 - 40 sec)")
-            Sys.sleep(0.75)
+            # incProgress(1/n_inc, detail = "Create, summary report (~ 20 - 40 sec)")
+            # Sys.sleep(0.75)
 
             # Render Summary Report (rmarkdown file)
             # rmarkdown::render(input = file.path(".", "Extras", "Summary_IN.rmd")
@@ -357,276 +410,6 @@ shinyServer(function(input, output, session) {
         }##content~END
         #, contentType = "application/zip"
     )##downloadData~END
-
-
-    # Data Explorer Tab ####
-
-    # create quantile color palette to change color of markers based on index values
-    # scale_range <- c(0,100)
-    # at <- c(0, 35, 55, 75, 100)
-    # qpal <- colorBin(c("red","yellow", "green"), domain = scale_range, bins = at)
-
-    output$mymap <- renderLeaflet({
-
-      req(!is.null(map_data$df_metsc))
-
-      df_data <- map_data$df_metsc
-
-      # create Narratives
-
-      Nar_Map <- factor(c("Exceptional"
-                          ,"Satisfactory"
-                          ,"Moderately Degraded"
-                          ,"Severely Degraded"))
-
-      Narratives <- ifelse(df_data$Index_Nar == "Exceptional", "Exceptional",
-                           ifelse(df_data$Index_Nar == "Satisfactory", "Satisfactory",
-                                  ifelse(df_data$Index_Nar == "Moderately Degraded", "Moderately Degraded",
-                                         "Severely Degraded")))
-
-      Narratives <- factor(Narratives, levels = c("Exceptional"
-                                                  ,"Satisfactory"
-                                                  ,"Moderately Degraded"
-                                                  ,"Severely Degraded"))
-
-
-      pal <- colorFactor(
-        palette = c('green', 'yellow', 'orange', 'red'),
-        domain = Narratives,
-        ordered = TRUE
-      )
-
-      # create Region_Name column to combine Index_Regions
-
-      # df_data$Region_Name <- ifelse(df_data$INDEX_REGION == "Bugs_N", "N",
-      #                                     ifelse(df_data$INDEX_REGION == "Bugs_NC", "NC",
-      #                                            ifelse(df_data$INDEX_REGION == "Bugs_SW", "SW",
-      #                                                   ifelse(df_data$INDEX_REGION == "Bugs_SE", "SE",
-      #                                                          "Unknown"))))
-
-      # subset data by Index_Region
-
-      HiN_data <- df_data %>%
-        filter(INDEX_REGION == "HiN")
-
-      LoN_data <- df_data %>%
-        filter(INDEX_REGION == "LoN")
-
-      leaflet() %>%
-        addTiles() %>%
-        addProviderTiles(providers$Esri.WorldStreetMap, group="Esri WSM") %>%
-        addProviderTiles("CartoDB.Positron", group="Positron") %>%
-        addProviderTiles(providers$Stamen.TonerLite, group="Toner Lite") %>%
-        addPolygons(data = IN_StateBasins
-                    , color = "blue"
-                    , weight = 5
-                    , fill = FALSE
-                    , label = IN_StateBasins$Monitoring
-                    , group = "State Basins"
-
-        ) %>%
-        addPolygons(data = IN_BugClasses
-                    , color = "green"
-                    , weight = 3
-                    , fill = FALSE
-                    , label = IN_BugClasses$Location
-                    , group = "Bug Site Classes"
-
-        ) %>%
-        addCircleMarkers(data = HiN_data, lat = ~LAT, lng = ~LONG
-                         , group = "High Nitrogen"
-                         , popup = paste("SampleID:", HiN_data$SAMPLEID, "<br>"
-                                         ,"Site Class:", HiN_data$INDEX_REGION, "<br>"
-                                         ,"Coll Date:", HiN_data$COLLDATE, "<br>"
-                                         ,"Station ID:", HiN_data$STATIONID, "<br>"
-                                         ,"<b> Index Value:</b>", round(HiN_data$Index, 2), "<br>"
-                                         ,"<b> Narrative:</b>", HiN_data$Index_Nar)
-                         , color = "black", fillColor = ~pal(Index_Nar)
-                         , fillOpacity = 1, stroke = TRUE
-                         , clusterOptions = markerClusterOptions()
-
-        ) %>%
-        addCircleMarkers(data = LoN_data, lat = ~LAT, lng = ~LONG
-                         , group = "Low Nitrogen"
-                         , popup = paste("SampleID:", LoN_data$SAMPLEID, "<br>"
-                                         ,"Site Class:", LoN_data$INDEX_REGION, "<br>"
-                                         ,"Coll Date:", LoN_data$COLLDATE, "<br>"
-                                         ,"Station ID:", LoN_data$STATIONID, "<br>"
-                                         ,"<b> Index Value:</b>", round(LoN_data$Index, 2), "<br>"
-                                         ,"<b> Narrative:</b>", LoN_data$Index_Nar)
-                         , color = "black", fillColor = ~pal(Index_Nar)
-                         , fillOpacity = 1, stroke = TRUE
-                         , clusterOptions = markerClusterOptions()
-
-        ) %>%
-        addLegend(pal = pal,
-                  values = Narratives,
-                  position = "bottomright",
-                  title = "Index Narratives",
-                  opacity = 1) %>%
-        addLayersControl(overlayGroups = c("High Nitrogen", "Low Nitrogen"
-                                           , "State Basins", "Bug Site Classes")
-                         ,baseGroups = c("Esri WSM"
-                                         , "Positron", "Toner Lite")
-                         ,options = layersControlOptions(collapsed = TRUE))%>%
-        hideGroup(c("State Basins", "Bug Site Classes")) %>%
-        addMiniMap(toggleDisplay = TRUE, tiles = providers$Esri.WorldStreetMap)
-      # %>%
-      #   onRender( # used for making download button https://stackoverflow.com/questions/47343316/shiny-leaflet-easyprint-plugin
-      #     "function(el, x) {
-      #       L.easyPrint({
-      #         sizeModes: ['Current', 'A4Landscape', 'A4Portrait'],
-      #         filename: 'mymap',
-      #         exportOnly: true,
-      #         hideControlContainer: true
-      #       }).addTo(this);
-      #       }"
-      #   ) ##onRender~END
-
-      }) ##renderLeaflet~END
-
-    # Map that filters output data to only a single site
-   observeEvent(input$siteid.select,{
-      req(!is.null(map_data$df_metsc))
-
-      df_data <- map_data$df_metsc
-
-      #
-      df_filtered <- df_data[df_data$SAMPLEID == input$siteid.select, ]
-
-      #
-      # get centroid (use mean just in case have duplicates)
-      view.cent <- c(mean(df_filtered$LONG), mean(df_filtered$LAT))
-      #
-      # modify map
-      leafletProxy("mymap") %>%
-        #clearShapes() %>%  # removes all layers
-        removeShape("layer_site_selected") %>%
-        #addPolylines(data=filteredData()
-        addCircles(data=df_filtered
-                   , lng=~LONG
-                   , lat=~LAT
-                   , popup= paste("SampleID:", df_filtered$SAMPLEID, "<br>"
-                                 ,"Site Class:", df_filtered$INDEX_REGION, "<br>"
-                                 ,"<b> Index Value:</b>", round(df_filtered$Index, 2), "<br>"
-                                 ,"<b> Narrative:</b>", df_filtered$Index_Nar)
-                   , color = "black"
-                   , group = "Sites_selected"
-                   , layerId = "layer_site_selected"
-                   , radius=30) %>%
-
-        setView(view.cent[1], view.cent[2], zoom = 16) # 1= whole earth
-
-    }) ## observeEvent(input$siteid.select) ~ END
-
-
-
-    ## Plots ####
-
-    df_sitefilt <- reactive({
-      req(!is.null(map_data$df_metsc))
-
-      df_all_scores <- map_data$df_metsc
-
-      df_all_scores[df_all_scores$SAMPLEID == input$siteid.select, ]
-    })## reactive~ END
-
-
-    output$DatExp_plot <- renderPlot({
-      if (is.null(df_sitefilt()))
-        return(NULL)
-
-      df_selected_site <- df_sitefilt()
-
-      df_trim <- df_selected_site %>%
-        select_if(!is.na(df_selected_site)) %>%
-        select(-c(Index_Nar)) %>%
-        select(SAMPLEID, Index, starts_with("SC_"))%>%
-        rename_at(vars(starts_with("SC_")),
-                  funs(str_replace(., "SC_", "")))
-
-      df_grph_input <- df_trim %>%
-        pivot_longer(!SAMPLEID, names_to = "Variable", values_to = "Score")
-
-      df_grph_input <- as.data.frame(df_grph_input)
-
-      # shape palette
-      shape_pal <- c("Index" = 16
-                     ,"nt_LOW_N" = 15
-                     ,"nt_LOW_P" = 15
-                     ,"pi_Tol_13" = 15
-                     ,"pt_Achnan_Navic" = 15
-                     ,"pt_BC_12_adj" = 15 # Calculated in app, not BioMonTools
-                     ,"pt_O_345" = 15
-                     ,"pt_PT_12" = 15
-                     ,"pt_SALINITY_34" = 15
-                     ,"pt_Sens_810" = 15)
-
-      # size palette
-      size_pal <- c("Index" = 10
-                    ,"nt_LOW_N" = 5
-                    ,"nt_LOW_P" = 5
-                    ,"pi_Tol_13" = 5
-                    ,"pt_Achnan_Navic" = 5
-                    ,"pt_BC_12_adj" = 5 # Calculated in app, not BioMonTools
-                    ,"pt_O_345" = 5
-                    ,"pt_PT_12" = 5
-                    ,"pt_SALINITY_34" = 5
-                    ,"pt_Sens_810" = 5)
-
-      ggplot(df_grph_input, aes(x=Variable, y = Score, shape = Variable))+
-        geom_point(aes(size = Variable))+
-        scale_size_manual(values=size_pal)+
-        scale_shape_manual(values=shape_pal)+
-        ylim(0,100)+
-        labs(y = "Scores",
-             x = "")+
-        coord_flip()+
-        scale_x_discrete(limits = rev(levels(as.factor(df_grph_input$Variable))))+
-        theme(text = element_text(size = 12),
-              axis.text = element_text(color = "black", size = 12),
-              axis.text.x = element_text(angle = 0, hjust = 0.5),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"),
-              legend.position = "none")
-
-    }) ## renderPlot ~ END
-
-    output$Index_plot <- renderPlot({
-      if (is.null(df_sitefilt()))
-        return(NULL)
-
-      df_all_scores <- map_data$df_metsc
-
-      df_selected_site <- df_sitefilt()
-
-      site_region <- as.character(df_selected_site$INDEX_REGION)
-
-      df_sub_regions <- df_all_scores[df_all_scores$INDEX_REGION == site_region,]
-
-      ggplot()+
-        geom_boxplot(data = df_sub_regions
-                     , aes(x = INDEX_REGION, y = Index), width = 0.25)+
-        geom_point(data = df_selected_site
-                   , aes(x = INDEX_REGION, y = Index), size = 5)+
-        labs(y = "Index Scores of Input Data Frame",
-             x = "Index Region")+
-        ylim(0,100)+
-        theme(text = element_text(size = 12),
-              axis.text = element_text(color = "black", size = 12),
-              axis.text.x = element_text(angle = 0, hjust = 0.5),
-              panel.background = element_rect(fill = "white"),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank(),
-              panel.border = element_blank(),
-              axis.line = element_line(color = "black"),
-              legend.position = "none")
-
-
-    }) ## renderPlot ~ END
 
     # Site Class Identifier ####
 

@@ -20,6 +20,9 @@ library(mapview) # used to download leaflet map
 library(stringr)
 library(shinythemes)
 library(capture)
+library(randomForest)
+library(magrittr)
+
 
 # File Size
 # By default, the file size limit is 5MB. It can be changed by
@@ -28,30 +31,40 @@ options(shiny.maxRequestSize = 25*1024^2)
 
 # define which metrics to keep in indices
 
-DiatomMetrics <- c("nt_LOW_N"
-                   ,"nt_LOW_P"
-                   ,"pi_Tol_13"
-                   ,"pt_Achnan_Navic"
-                   ,"pt_BC_12"
-                   ,"pt_O_345"
-                   ,"pt_PT_12"
+DiatomMetrics <- c("pi_BC_12"
                    ,"pt_SALINITY_34"
-                   ,"pt_Sens_810")# END DiatomMetrics
+                   ,"wa_POLL_TOL"
+                   ,"nt_DIATAS_TN_2"
+                   ,"pt_TROPHIC_12"
+                   ,"pt_TROPHIC_56"
+                   ,"pt_O_4")# END DiatomMetrics
 
+# info for randomForest ####
+predictors<-c("BFIWs","Elevation","KffactWs","PrecipWs"
+              ,"RckDepWs","SWs","TmaxWs","TmeanWs")
 
-#### GIS/Map data ####
-#
-# dir_data <- file.path(".","GIS_Data")
-#
-# jsfile <- "https://rawgit.com/rowanwins/leaflet-easyPrint/gh-pages/dist/bundle.js"
-# #https://stackoverflow.com/questions/47343316/shiny-leaflet-easyprint-plugin
-#
-# ## Indiana State Basins
-# IN_StateBasins <- rgdal::readOGR(file.path(dir_data, "IN_StateBasins_20210113.shp"))
-#
-# ## Indiana 2017 Bug IBI Site Classes
-#
-# IN_BugClasses <- rgdal::readOGR(file.path(dir_data, "IN_BugClasses_20210113.shp"))
+std_Parameters<-read.csv("./data/standardization.parameters.csv",row.names=1)
 
+increasers<-c("pt_T_WDEQ_12_RFadj","nt_Diatas_TN_2_RFadj","BC_12.pa")
 
+decreasers<-c("WA_Salinity_USGS","pt_O_WDEQ_4","pt_H_WDEQ_34_RFadj","pt_T_WDEQ_56_RFadj")
 
+standardizeDecreasers <- function(x) {
+  standardizedDecreasers<-100*(std_Parameters["ninetififth",i] - x)/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
+}
+
+standardizeIncreasers <- function(x) {
+  standardizedIncreasers<-100*(x - std_Parameters["fifth",i])/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
+}
+
+# metric names to use in raw format (will be standardized though)
+raw<-c("WA_Salinity_USGS","pt_O_WDEQ_4","BC_12.pa")
+
+# metric names to use in adjusted format (will be adjusted and standardized)
+toAdjust<-c("pt_H_WDEQ_34","pt_T_WDEQ_56","nt_Diatas_TN_2","pt_T_WDEQ_12")
+
+# rf models for adjusted metrics
+H34_model<-load("./data/pt_H_WDEQ_34_RFmod02162022.Rdata")
+T56_model<-load("./data/pt_T_WDEQ_56_RFmod02162022.Rdata")
+DiatasTN2_model<-load("./data/nt_Diatas_TN_2_RFmod02162022.Rdata")
+T12_model<-load("./data/pt_T_WDEQ_12_RFmod02162022.Rdata")
