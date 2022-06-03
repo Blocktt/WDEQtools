@@ -534,7 +534,7 @@ shinyServer(function(input, output, session) {
 
         ### QC Results ####
 
-        N_MetAdjFact_NoData <- sum(df_combined$Missing_Data == TRUE)
+        N_MetAdjFact_NoData <- sum(df_combined$Missing_Data == TRUE, na.rm = TRUE)
         if(N_MetAdjFact_NoData>0){
           message(paste("Some COMIDs having missing StreamCat data.\n")
                   ,paste("Number of sites with missing data:", N_MetAdjFact_NoData,"\n")
