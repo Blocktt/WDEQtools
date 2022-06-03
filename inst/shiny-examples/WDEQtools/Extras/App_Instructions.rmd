@@ -17,10 +17,10 @@ WDEQtools was developed to calculate diatom metrics and Indices of Biotic Integr
 
 The Instructions are divided into three sections: 1) preparing the input file; 2) app operation; and 3) frequently asked questions (FAQ). Links to an example input file and a document containing more detailed information on preparing the input file are also provided.
 
-This app was developed by Ben Block from Tetra Tech, Inc. (Ben.Block@tetratech.com), with underlying R code written by Ben Block and Erik Leppo (Erik.Leppo@tetratech.com). Please contact Ben Block should any issues or questions arise.
+This app was developed by Ben Block from Tetra Tech. (Ben.Block@tetratech.com), with underlying R code written by Ben Block, Diane Allen (Diane.Allen@tetratech.com), and Erik Leppo (Erik.Leppo@tetratech.com). Please contact Ben Block should any issues or questions arise.
 
 ### Foreword
-Tetra Tech, Inc. developed the WDEQtools shiny app for the Wyoming Department of Environmental Management (WDEQ). It allows WDEQ and their partners to calculate IBI scores for diatom samples. The diatom IBIs improve WDEQ’s diagnostic ability to identify degradation in biological integrity and water quality. The app is streamlined and easy to operate, and only requires an input dataset to function. Shiny apps are interactive web applications that serve as graphical user interfaces. They are linked to R, which is an open source programming language and software environment for statistical computing.
+Tetra Tech developed the WDEQtools shiny app for the Wyoming Department of Environmental Management (WDEQ). It allows WDEQ and their partners to calculate IBI scores for diatom samples. The diatom IBIs improve WDEQ’s diagnostic ability to identify degradation in biological integrity and water quality. The app is streamlined and easy to operate, and only requires an input dataset to function. Shiny apps are interactive web applications that serve as graphical user interfaces. They are linked to R, which is an open source programming language and software environment for statistical computing.
 
 ### Preparing the input file
 WDEQtools requires input files to be in a tabular format, saved as either comma-separated values (CSV) (most commonly used) or tab-separated (.txt or .tsv) files. Table 1 contains a list of required fields. Column names must be capitalized and match the spelling and symbology exactly as shown (some column headings have underscores).
@@ -83,10 +83,10 @@ Once the 'Calculator' tab is opened, the user will see the IBI calculator interf
 3. The IBI calculation is taking forever to calculate, has the app frozen?
     + Even though R works remarkably fast, a large dataset will cause the app to slow down. The estimate is approximately 30 seconds for small datasets; however, this could extend to a few minutes for large datasets.
     
-# Metric Adjustment Facotrs Instructions
+# Metric Adjustment Factors Instructions
 
 ### Foreword
-This tab allows the user to upload station information and assigns natural StreamCat factors. Some metrics are adjusted based on site-specific StreamCat estimates. [StreamCat](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset-0). Note, there are approximately 50 COMIDs in WY with some missing StreamCat data. Missing adjustment factor data will cause IBI scores to be incorrectly calculated. So, we recommend inputing an estimate from a nearby, similarly sized COMID. See Table 2 for additional information on the StreamCat variables. See Table 3 for necessary input fields.For more information on the derivation of these metric adjustment factors, please read the [WDEQ Diatom IBI report](https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports). Note, only COMIDs from the state of Wyoming can be used. If the user would like COMIDs from other, nearby states, please contact Ben Block (Ben.Block@tetratech.com) and he can update the available list.
+This tab allows the user to upload station information and assigns natural StreamCat factors. Some metrics are adjusted based on site-specific StreamCat estimates. [(StreamCat)](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset). Note, there are approximately 50 COMIDs in WY with some missing StreamCat data. Missing adjustment factor data will cause IBI scores to be incorrectly calculated. So, we recommend inputing an estimate from a nearby, similarly sized COMID. See Table 2 for additional information on the StreamCat variables. See Table 3 for necessary input fields. For more information on the derivation of these metric adjustment factors, please read the [WDEQ Diatom IBI report](https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports). Note, only COMIDs from the state of Wyoming can be used. If the user would like COMIDs from other, nearby states, please contact Ben Block (Ben.Block@tetratech.com) and he can update the available list.
 
 
 #### Table 2. Background information on StreamCat variables
