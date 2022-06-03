@@ -9,6 +9,24 @@
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output, session) {
+  # modal dialog ####
+  myModal <- modalDialog(
+    title = "Greetings!"
+    ,paste("Welcome to the Wyoming DEQ Diatom IBI Calculator!")
+    ,br()
+    ,paste("WDEQtools was developed to calculate the benthic diatom"
+           ,"Index of Biotic Integrity (IBI) for streams in Wyoming."
+           ,"This app was developed by Ben Block (Ben.Block@tetratech.com),"
+           ,"with underlying R code written by Ben Block, Diane Allen (Diane.Allen@tetratech.com)"
+           ,", and Erik W. Leppo (Erik.Leppo@tetratech.com)."
+           ,"Please contact Ben Block should any issues or questions arise.")
+    ,br()
+    # ,img(src = "WDEQ_logo.png", height = 100, align = "center")
+    ,HTML('<center><img src="WDEQ_logo.png" height="100"></center>')
+    ,easyClose = T)
+
+  # Show the model on start up
+  showModal(myModal)
 
     # Misc Names ####
     output$fn_input_display <- renderText({input$fn_input}) ## renderText~END

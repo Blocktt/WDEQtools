@@ -49,5 +49,5 @@ table1 <- read_excel(file.path(table.dir, table.file), sheet = tab1.dir
 options(knitr.kable.NA = '')
 table1 %>%
   kable() %>%
-  kable_styling(full_width = F, position = "left")
+  kable_styling(full_width = F, position = "left", font_size = 14)
 ```

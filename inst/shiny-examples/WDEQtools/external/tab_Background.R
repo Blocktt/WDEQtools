@@ -1,8 +1,14 @@
 function(){
   tabPanel("Background",
-           mainPanel(
-             img(src = "WDEQ_logo.png", height = 175)
-             ,includeHTML("www/App_Background.html")
-           )##mainPanel~END
-  ) #tabPanel ~END
-}##FUNCTION~END
+           sidebarLayout(
+             sidebarPanel(
+               img(src = "WDEQ_logo.png", height = 200)
+               , width = 3
+             )# sidebarPanel~END
+             , mainPanel(
+               includeHTML("www/App_Background.html")
+               , width = 7
+             )# mainPanel~END
+           )# sidebarLayout~END
+  ) # tabPanel~END
+}# FUNCTION~END

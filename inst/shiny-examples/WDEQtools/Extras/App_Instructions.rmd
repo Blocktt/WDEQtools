@@ -48,7 +48,7 @@ table1 <- read_excel(file.path(table.dir, table.file), sheet = tab1.dir
 # kable(table1)
 table1 %>% 
   kbl() %>% 
-  kable_styling(full_width = F, position = "left")
+  kable_styling(full_width = F, position = "left", font_size = 14)
 ```
 
 
@@ -106,7 +106,7 @@ table2 <- read_excel(file.path(table.dir, table.file), sheet = tab2.dir
 # kable(table2)
 table2 %>% 
   kbl() %>% 
-  kable_styling(full_width = F, position = "left")
+  kable_styling(full_width = F, position = "left", font_size = 14)
 ```
 
 
@@ -127,7 +127,7 @@ table3 <- read_excel(file.path(table.dir, table.file), sheet = tab3.dir
 # kable(table3)
 table3 %>% 
   kbl() %>% 
-  kable_styling(full_width = F, position = "left")
+  kable_styling(full_width = F, position = "left", font_size = 14)
 ```
 
 
