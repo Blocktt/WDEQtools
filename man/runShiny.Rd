@@ -2,19 +2,19 @@
 % Please edit documentation in R/runShiny.R
 \name{runShiny}
 \alias{runShiny}
-\title{run MassIBItools Shiny Example}
+\title{run WDEQtools Shiny Example}
 \usage{
 runShiny()
 }
 \description{
-Launches Shiny app for MassIBItools.
+Launches Shiny app for WDEQtools.
 }
 \details{
-The Shiny app based on the R package MassIBItools is included in the R package.
+The Shiny app based on the R package WDEQtools is included in the R package.
 This function launches that app.
 
 The Shiny app is online at:
-https://tetratech-wtr-wne.shinyapps.io/MassIBItools/
+https://tetratech-wtr-wne.shinyapps.io/WDEQtools/
 }
 \examples{
 \dontrun{

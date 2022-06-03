@@ -1,4 +1,4 @@
----
+~---
 title: "Notebook, WDEQtools"
 output: html_notebook
 editor_options: 
@@ -50,7 +50,7 @@ library(myPkg, character.only = TRUE)
 setwd(paste0("./", myPkg))
 # Help page
 help(package=(myPkg))
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ```
 
 After creating the package reload it after restarting R within RStudio (Control+Shift+F10).
