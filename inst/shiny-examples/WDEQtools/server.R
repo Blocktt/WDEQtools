@@ -411,7 +411,7 @@ shinyServer(function(input, output, session) {
         #, contentType = "application/zip"
     )##downloadData~END
 
-    # Site Class Identifier ####
+    # Metric Adjustment Factors ####
 
     ## df_import ####
     output$df_site_import_DT <- renderDT({
@@ -421,7 +421,7 @@ shinyServer(function(input, output, session) {
       # column will contain the local filenames where the data can
       # be found.
 
-      inFile <- input$fn_input_siteclass
+      inFile <- input$fn_input_MetAdjFact
 
       # shiny::validate(
       #   need(inFile != "", "Please select a data set") # used to inform the user that a data set is required
@@ -432,14 +432,14 @@ shinyServer(function(input, output, session) {
       }##IF~is.null~END
 
       # Read user imported file
-      df_input_sc <- read.csv(inFile$datapath, header = TRUE,
+      df_input_maf <- read.csv(inFile$datapath, header = TRUE,
                            sep = input$sep_sci,
                            quote = input$quote_sci, stringsAsFactors = FALSE)
 
       required_columns <- c("COMID"
                             ,"STATIONID")
 
-      column_names <- colnames(df_input_sc)
+      column_names <- colnames(df_input_maf)
 
       # QC Check for column names
       col_req_match <- required_columns %in% column_names
@@ -453,25 +453,25 @@ shinyServer(function(input, output, session) {
       )##END ~ validate() code
 
       # Add "Results" folder if missing
-      boo_Results <- dir.exists(file.path(".", "Results_SiteClass"))
+      boo_Results <- dir.exists(file.path(".", "Results_MetAdjFact"))
       if(boo_Results==FALSE){
-        dir.create(file.path(".", "Results_SiteClass"))
+        dir.create(file.path(".", "Results_MetAdjFact"))
       }
 
       # Remove all files in "Results" folder
-      fn_results <- list.files(file.path(".", "Results_SiteClass"), full.names=TRUE)
+      fn_results <- list.files(file.path(".", "Results_MetAdjFact"), full.names=TRUE)
       file.remove(fn_results)
 
       # Write to "Results" folder - Import as TSV
-      fn_input <- file.path(".", "Results_SiteClass", "data_import_siteclassidentifier.tsv")
-      write.table(df_input_sc, fn_input, row.names=FALSE
+      fn_input <- file.path(".", "Results_MetAdjFact", "data_import_MetAdjFact.tsv")
+      write.table(df_input_maf, fn_input, row.names=FALSE
                   , col.names=TRUE, sep="\t")
 
       # Copy to "Results" folder - Import "as is"
-      file.copy(input$fn_input_siteclass$datapath
-                , file.path(".", "Results_SiteClass", input$fn_input_siteclass$name))
+      file.copy(input$fn_input_MetAdjFact$datapath
+                , file.path(".", "Results_MetAdjFact", input$fn_input_MetAdjFact$name))
 
-      return(df_input_sc)
+      return(df_input_maf)
 
     }##expression~END
     , filter="top", options=list(scrollX=TRUE)
@@ -487,15 +487,15 @@ shinyServer(function(input, output, session) {
         n_inc <- 4
 
         # sink output
-        file_sink <- file(file.path(".", "Results_SiteClass", "results_log_sci.txt")
+        file_sink <- file(file.path(".", "Results_MetAdjFact", "results_log_maf.txt")
                           , open = "wt")
         sink(file_sink, type = "output", append = TRUE)
         sink(file_sink, type = "message", append = TRUE)
 
         # Log
-        message("Results Log from WDEQtools Site Class Identifier")
+        message("Results Log from WDEQtools Metric Adjustment Factors")
         message(Sys.time())
-        inFile <- input$fn_input_siteclass
+        inFile <- input$fn_input_MetAdjFact
         message(paste0("file = ", inFile$name))
 
         # Increment the progress bar, and update the detail text.
@@ -504,7 +504,7 @@ shinyServer(function(input, output, session) {
 
         # Read in saved file (known format)
         df_data <- NULL  # set as null for IF QC check prior to import
-        fn_input <- file.path(".", "Results_SiteClass", "data_import_siteclassidentifier.tsv")
+        fn_input <- file.path(".", "Results_MetAdjFact", "data_import_MetAdjFact.tsv")
         df_data <- read.delim(fn_input, stringsAsFactors = FALSE, sep="\t")
 
         # QC, FAIL if TRUE
@@ -521,7 +521,8 @@ shinyServer(function(input, output, session) {
 
         # Read in saved COMID file
         df_COMIDs <- NULL  # set as null for IF QC check prior to import
-        fn_input <- file.path(".", "Extras", "tables", "df_COMIDs.csv")
+        fn_input <- file.path(".", "Extras", "tables"
+                              , "WY_StreamCat_MetAdjFactors_20220603.csv")
         df_COMIDs <- read.csv(fn_input, stringsAsFactors = FALSE, sep=",")
 
 
@@ -533,40 +534,43 @@ shinyServer(function(input, output, session) {
 
         ### QC Results ####
 
-        N_SiteClass_zeros <- sum(is.na(df_combined$SiteClass))
-        if(N_SiteClass_zeros>0){
-          message(paste("Some input COMIDs did not match with the site class identifier table.\n")
-                  ,paste("Number of mismatches:", N_SiteClass_zeros,"\n")
+        N_MetAdjFact_NoData <- sum(df_combined$Missing_Data == TRUE)
+        if(N_MetAdjFact_NoData>0){
+          message(paste("Some COMIDs having missing StreamCat data.\n")
+                  ,paste("Number of sites with missing data:", N_MetAdjFact_NoData,"\n")
+                  ,paste("Please check that input COMIDs are correct.\n")
+                  ,paste("If problem persists, estimate metric adjustment factor from nearby COMID.\n")
+                  ,paste("Contact Ben Block (Ben.Block@tetratech.com) with any questions.")
+          )# message~ END
+        }#IF statement ~END
+
+        N_MetAdjFact_NA <- sum(is.na(df_combined$Missing_Data))
+        if(N_MetAdjFact_NA>0){
+          message(paste("Some input COMIDs did not match with the metric adjustment factors table.\n")
+                  ,paste("Number of mismatches:", N_MetAdjFact_NA,"\n")
                   ,paste("Please check that input COMIDs are correct.\n")
                   ,paste("Contact Ben Block (Ben.Block@tetratech.com) if problem persists.")
           )# message~ END
         }#IF statement ~END
-
-#         if(N_SiteClass_zeros>0){
-#           message("Some input COMIDs did not match with the site class identifier table.
-#                   QC check the COMIDs for accuracy.
-#                   Contact Ben Block (Ben.Block@tetratech.com) if problem persists.")
-#         }#IF statement ~END
-
 
         # Increment the progress bar, and update the detail text.
         incProgress(1/n_inc, detail = "Join Completed!")
         Sys.sleep(1)
 
         # Save
-        fn_siteclasses <- file.path(".", "Results_SiteClass"
-                               , "results_SiteClassesIdentified.csv")
-        write.csv(df_combined, fn_siteclasses, row.names = FALSE)
+        fn_MetAdjFact <- file.path(".", "Results_MetAdjFact"
+                               , "results_MetAdjFact.csv")
+        write.csv(df_combined, fn_MetAdjFact, row.names = FALSE)
 
         # Increment the progress bar, and update the detail text.
         incProgress(1/n_inc, detail = "Create, Zip")
         Sys.sleep(0.50)
 
         # Create zip file
-        fn_4zip <- list.files(path = file.path(".", "Results_SiteClass")
+        fn_4zip <- list.files(path = file.path(".", "Results_MetAdjFact")
                               , pattern = "^results_"
                               , full.names = TRUE)
-        zip(file.path(".", "Results_SiteClass", "results.zip"), fn_4zip)
+        zip(file.path(".", "Results_MetAdjFact", "results.zip"), fn_4zip)
 
         # enable download button
         shinyjs::enable("c_downloadData")
@@ -577,7 +581,7 @@ shinyServer(function(input, output, session) {
       }##expr~withProgress~END
       )##withProgress~END
     }##expr~ObserveEvent~END
-    )##observeEvent~b_CalcIBI~END
+    )##observeEvent~C_CalcIBI~END
 
 
     ## Download dataset ####
@@ -585,27 +589,15 @@ shinyServer(function(input, output, session) {
       # file name
 
       filename = function() {
-        paste("Site_Class_Identifer_Results_"
+        paste("Metric_Adjustment_Factor_Results_"
               , format(Sys.time(), "%Y%m%d_%H%M%S"), ".zip", sep = "")
       },
       content = function(fname) {##content~START
 
         # Create Zip file
-        file.copy(file.path(".", "Results_SiteClass", "results.zip"), fname)
+        file.copy(file.path(".", "Results_MetAdjFact", "results.zip"), fname)
 
         #
       }##content~END
     )##downloadData~END
-
-    # StoryMaps ####
-
-    ## Technical ####
-    #https://stackoverflow.com/questions/33020558/embed-iframe-inside-shiny-app
-    #https://stackoverflow.com/questions/59628035/r-shiny-how-to-fill-out-the-entire-space-of-the-browser-window-with-an-iframe
-    output$StoryMap_Tech <- renderUI({
-      Technical <- paste0("https://storymaps.arcgis.com/stories/98d52e3c1f004d658a8d452a0c0b4aea")
-      my_Technical <- tags$iframe(src=Technical, style='width:90vw;height:90vh;')
-      my_Technical
-    })## renderUI ~ END
-
 })##shinyServer~END
