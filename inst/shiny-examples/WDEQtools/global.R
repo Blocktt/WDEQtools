@@ -43,19 +43,19 @@ DiatomMetrics <- c("pi_BC_12"
 predictors<-c("BFIWs","Elevation","KffactWs","PrecipWs"
               ,"RckDepWs","SWs","TmaxWs","TmeanWs")
 
-std_Parameters<-read.csv("./data/standardization.parameters.csv",row.names=1)
+# std_Parameters<-read.csv("./data/standardization.parameters.csv",row.names=1)
 
-increasers<-c("pt_T_WDEQ_12_RFadj","nt_Diatas_TN_2_RFadj","BC_12.pa")
+decreasers<-c("pt_T_WDEQ_12_RFadj","nt_Diatas_TN_2_RFadj","BC_12.pa")
 
-decreasers<-c("WA_Salinity_USGS","pt_O_WDEQ_4","pt_H_WDEQ_34_RFadj","pt_T_WDEQ_56_RFadj")
+increasers<-c("WA_Salinity_USGS","pt_O_WDEQ_4","pt_H_WDEQ_34_RFadj","pt_T_WDEQ_56_RFadj")
 
-# standardizeDecreasers <- function(x) {
-#   standardizedDecreasers<-100*(std_Parameters["ninetififth",i] - x)/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
-# }
-#
-# standardizeIncreasers <- function(x) {
-#   standardizedIncreasers<-100*(x - std_Parameters["fifth",i])/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
-# }
+standardizeIncreasers <- function(x) {
+  standardizedIncreasers<-100*(std_Parameters["ninetififth",i] - x)/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
+}
+
+standardizeDecreasers <- function(x) {
+  standardizedDecreasers<-100*(x - std_Parameters["fifth",i])/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
+}
 
 # metric names to use in raw format (will be standardized though)
 raw<-c("WA_Salinity_USGS","pt_O_WDEQ_4","BC_12.pa")
@@ -63,8 +63,8 @@ raw<-c("WA_Salinity_USGS","pt_O_WDEQ_4","BC_12.pa")
 # metric names to use in adjusted format (will be adjusted and standardized)
 toAdjust<-c("pt_H_WDEQ_34","pt_T_WDEQ_56","nt_Diatas_TN_2","pt_T_WDEQ_12")
 
-# rf models for adjusted metrics
-H34_model<-load("./data/pt_H_WDEQ_34_RFmod02162022.Rdata")
-T56_model<-load("./data/pt_T_WDEQ_56_RFmod02162022.Rdata")
-DiatasTN2_model<-load("./data/nt_Diatas_TN_2_RFmod02162022.Rdata")
-T12_model<-load("./data/pt_T_WDEQ_12_RFmod02162022.Rdata")
+# # rf models for adjusted metrics
+# H34_model<-load("./data/pt_H_WDEQ_34_RFmod02162022.Rdata")
+# T56_model<-load("./data/pt_T_WDEQ_56_RFmod02162022.Rdata")
+# DiatasTN2_model<-load("./data/nt_Diatas_TN_2_RFmod02162022.Rdata")
+# T12_model<-load("./data/pt_T_WDEQ_12_RFmod02162022.Rdata")

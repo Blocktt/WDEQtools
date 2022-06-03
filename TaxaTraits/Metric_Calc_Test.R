@@ -14,7 +14,7 @@ library(randomForest)
 # Declare directories ####
 wd <- getwd()
 input.dir <- "TaxaTraits"
-fn.data1 <- "WDEQ_Cal_Input_4RShiny_20220601.csv"
+fn.data1 <- "WDEQ_Cal_Input_4RShiny_20220603.csv"
 myDate <- format(Sys.Date(), "%Y%m%d")
 
 # Read data files ####
@@ -103,24 +103,24 @@ df_metval2$SAMPLEID <- as.character(df_metval2$SAMPLEID)
 
 
 ## adjust metrics ####
-std_Parameters<-read.csv("./Diane_App/data/standardization.parameters.csv",row.names=1)
+std_Parameters<-read.csv("./inst/shiny-examples/WDEQtools/data/standardization.parameters.csv",row.names=1)
 
-H34_model<-load("./Diane_App/data/pt_H_WDEQ_34_RFmod02162022.Rdata")
+H34_model<-load("./inst/shiny-examples/WDEQtools/data/pt_H_WDEQ_34_RFmod02162022.Rdata")
 pt_H_WDEQ_34_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### use forest to predict pt_H_WDEQ_34
 pt_H_WDEQ_34_RFadj<-df_metval2[,"pt_H_WDEQ_34"] - pt_H_WDEQ_34_pred				##### calculate residual
 df_metval2$pt_H_WDEQ_34_RFadj<-pt_H_WDEQ_34_RFadj
 
-T56_model<-load("./Diane_App/data/pt_T_WDEQ_56_RFmod02162022.Rdata")
+T56_model<-load("./inst/shiny-examples/WDEQtools/data/pt_T_WDEQ_56_RFmod02162022.Rdata")
 pt_T_WDEQ_56_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### pt_T_WDEQ_56_RFadj
 pt_T_WDEQ_56_RFadj<-df_metval2[,"pt_T_WDEQ_56"] - pt_T_WDEQ_56_pred
 df_metval2$pt_T_WDEQ_56_RFadj<-pt_T_WDEQ_56_RFadj
 
-DiatasTN2_model<-load("./Diane_App/data/nt_Diatas_TN_2_RFmod02162022.Rdata")
+DiatasTN2_model<-load("./inst/shiny-examples/WDEQtools/data/nt_Diatas_TN_2_RFmod02162022.Rdata")
 nt_Diatas_TN_2_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### nt_Diatas_TN_2_RFadj
 nt_Diatas_TN_2_RFadj<-df_metval2[,"nt_Diatas_TN_2"] - nt_Diatas_TN_2_pred
 df_metval2$nt_Diatas_TN_2_RFadj<-nt_Diatas_TN_2_RFadj
 
-T12_model<-load("./Diane_App/data/pt_T_WDEQ_12_RFmod02162022.Rdata")
+T12_model<-load("./inst/shiny-examples/WDEQtools/data/pt_T_WDEQ_12_RFmod02162022.Rdata")
 pt_T_WDEQ_12_pred<-predict(rFmodel,df_metval2[,c(predictors)])				##### pt_T_WDEQ_12_RFadj
 pt_T_WDEQ_12_RFadj<-df_metval2[,"pt_T_WDEQ_12"] - pt_T_WDEQ_12_pred
 df_metval2$pt_T_WDEQ_12_RFadj<-pt_T_WDEQ_12_RFadj
