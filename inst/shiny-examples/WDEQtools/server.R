@@ -416,7 +416,8 @@ shinyServer(function(input, output, session) {
         # use index and date time as file name
 
         filename = function() {
-            paste(input$MMI, "_", format(Sys.time(), "%Y%m%d_%H%M%S"), ".zip", sep = "")
+            paste("WY_Diatom_IBI_Results_"
+                  , format(Sys.time(), "%Y%m%d_%H%M%S"), ".zip", sep = "")
         },
         content = function(fname) {##content~START
 
