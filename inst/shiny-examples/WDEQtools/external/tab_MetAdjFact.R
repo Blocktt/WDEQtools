@@ -40,7 +40,7 @@ function(){
 
              )##sidebarPanel~END
              , mainPanel(
-               # includeHTML("www/App_MetricAdjustmentFactors.html")
+               includeHTML("www/App_MetricAdjustmentFactors.html")
                 DT::dataTableOutput('df_site_import_DT')
              )##mainPanel~END
 
