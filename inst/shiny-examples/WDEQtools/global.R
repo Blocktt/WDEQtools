@@ -49,13 +49,13 @@ increasers<-c("pt_T_WDEQ_12_RFadj","nt_Diatas_TN_2_RFadj","BC_12.pa")
 
 decreasers<-c("WA_Salinity_USGS","pt_O_WDEQ_4","pt_H_WDEQ_34_RFadj","pt_T_WDEQ_56_RFadj")
 
-standardizeDecreasers <- function(x) {
-  standardizedDecreasers<-100*(std_Parameters["ninetififth",i] - x)/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
-}
-
-standardizeIncreasers <- function(x) {
-  standardizedIncreasers<-100*(x - std_Parameters["fifth",i])/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
-}
+# standardizeDecreasers <- function(x) {
+#   standardizedDecreasers<-100*(std_Parameters["ninetififth",i] - x)/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
+# }
+#
+# standardizeIncreasers <- function(x) {
+#   standardizedIncreasers<-100*(x - std_Parameters["fifth",i])/(std_Parameters["ninetififth",i] - std_Parameters["fifth",i])
+# }
 
 # metric names to use in raw format (will be standardized though)
 raw<-c("WA_Salinity_USGS","pt_O_WDEQ_4","BC_12.pa")

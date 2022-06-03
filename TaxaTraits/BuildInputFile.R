@@ -14,14 +14,14 @@ library(readxl)
 # Declare directories ####
 wd <- getwd()
 input.dir <- "TaxaTraits"
-fn.data1 <- "TaxaMasterPeriphyton_TrimTraits_20220531.xlsx"
+fn.data1 <- "TaxaMasterPeriphyton_TrimTraits_20220603.csv"
 fn.data2 <- "WDEQ_Taxa_MP_ni_20220514.xlsx"
 fn.data3 <- "WDEQ_SitesData_GIS.xlsx"
 fn.data4 <- "WDEQ_DiatomMetrics_BenJ.csv"
 myDate <- format(Sys.Date(), "%Y%m%d")
 
 # Read data files ####
-df_msl <- read_excel(file.path(wd,input.dir, fn.data1)
+df_msl <- read_csv(file.path(wd,input.dir, fn.data1)
                      , na = c("NA",""), trim_ws = TRUE, skip = 0
                      , col_names = TRUE, guess_max = 100000)
 

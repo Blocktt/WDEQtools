@@ -1,7 +1,7 @@
 function(){
   tabPanel("Instructions",
            mainPanel(
-             img(src = "IDEM_logo.png", height = 175)
+             img(src = "WDEQ_logo.png", height = 175)
              ,br()
              ,includeHTML("www/App_Instructions.html")
 

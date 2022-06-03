@@ -11,15 +11,15 @@
 
 # Load files for individual screens
 
-# tab_Background <- source("external/tab_Background.R", local = TRUE)$value
-# tab_Instructions <- source("external/tab_Instructions.R", local = TRUE)$value
+tab_Background <- source("external/tab_Background.R", local = TRUE)$value
+tab_Instructions <- source("external/tab_Instructions.R", local = TRUE)$value
 tab_Calculator <- source("external/tab_Calculator.R", local = TRUE)$value
 tab_MetAdjFact <- source("external/tab_MetAdjFact.R", local = TRUE)$value
 
 # Define UI
-shinyUI(navbarPage(theme = shinytheme("cerulean"), "Wyoming DEQ Diatom IBI Calculator v0.0.1.9100"
-                   # ,tab_Background()
-                   # ,tab_Instructions()
+shinyUI(navbarPage(theme = shinytheme("yeti"), "Wyoming DEQ Diatom IBI Calculator v0.0.1.9100"
+                   ,tab_Background()
+                   ,tab_Instructions()
                    ,tab_Calculator()
                    ,tab_MetAdjFact()
           )## navbarPage~END
