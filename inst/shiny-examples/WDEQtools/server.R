@@ -357,10 +357,10 @@ shinyServer(function(input, output, session) {
             metricsDecreasers2[,4]<-100*(metricsDecreasers$BC_12.pa - std_Parameters["fifth",names(metricsDecreasers)[4]])/(std_Parameters["ninetififth",names(metricsDecreasers)[4]] - std_Parameters["fifth",names(metricsDecreasers)[4]])
 
             # combine and truncate at 0 and 100
-            metrics_std <- left_join(metricsDecreasers2, metricsIncreasers2
+            metrics_std <- suppressWarnings(left_join(metricsDecreasers2, metricsIncreasers2
                                      , by = "SAMPLEID") %>%
               mutate_if(is.numeric, funs(ifelse(.>100,100,.))) %>%
-              mutate_if(is.numeric, funs(ifelse(.<0,0,.)))
+              mutate_if(is.numeric, funs(ifelse(.<0,0,.))))
 
             ## calculate index
             metrics_std <- metrics_std %>%
