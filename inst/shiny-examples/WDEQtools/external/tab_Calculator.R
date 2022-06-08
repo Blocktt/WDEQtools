@@ -1,5 +1,5 @@
 function(){
-  tabPanel("Calculator",
+  tabPanel("Index Calculator",
            # SideBar
            sidebarLayout(
              sidebarPanel(

@@ -11,9 +11,9 @@ output:
 knitr::opts_chunk$set(results='asis', echo=FALSE, warning=FALSE, message = FALSE)
 ```
 
-# IBI Calculator Instructions
+# Index Calculator Instructions
 
-WDEQtools was developed to calculate diatom metrics and Indices of Biotic Integrity (IBI) for perennial, wadeable streams in Wyoming. Detailed documentation of IBI development can be downloaded [here](https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports). Users can run any data through the IBI calculator and get a result. However, if samples do not meet the criteria listed on the Background page, results should be interpreted with caution. 
+WDEQtools was developed to calculate diatom metrics and Indices of Biotic Integrity (IBI) for perennial, wadeable streams in Wyoming. Detailed documentation of IBI development can be downloaded [here](https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports). Users can run any data through the Index calculator and get a result. However, if samples do not meet the criteria listed on the Background page, results should be interpreted with caution. 
 
 The Instructions are divided into three sections: 1) preparing the input file; 2) app operation; and 3) frequently asked questions (FAQ). Links to an example input file and a document containing more detailed information on preparing the input file are also provided.
 
@@ -29,7 +29,7 @@ Click here to view an [EXAMPLE INPUT FILE](https://github.com/Blocktt/ShinyAppDo
 
 If the user is unsure how to download a data file from GitHub, [watch this short video](https://www.youtube.com/watch?v=GIJdfuAoqFI) or contact Ben Block (ben.block@tetratech.com).
 
-The input file is now ready to be run through the IBI calculator!
+The input file is now ready to be run through the Index Calculator!
 
 #### Table 1. List of required fields. Column names must be capitalized and match the spelling and symbology exactly as shown.
 ```{r table_1}
@@ -54,7 +54,7 @@ table1 %>%
 
 ### Instructions
 
-Once the 'Calculator' tab is opened, the user will see the IBI calculator interface. The user should follow the onscreen instructions as follows:
+Once the 'Index Calculator' tab is opened, the user will see the Index Calculator interface. The user should follow the onscreen instructions as follows:
 
 1. Load file
     + **Default settings work well**. If the user is unsure of how to format the data, simply store as a .csv and use the default load settings.
@@ -64,7 +64,7 @@ Once the 'Calculator' tab is opened, the user will see the IBI calculator interf
     + Choose file to upload. Hit the browse button and search for the input file. 
     + Once uploaded, make sure data look correct in the viewer. If the incorrect Separator or Quote is chosen, the user may receive an error or the data may look incorrect in the viewer. 
 
-2. Calculate IBI
+2. Calculate Index
     + Hit the 'Calculate Metric Values and Scores' button.
     + A progress bar will appear in the bottom, right corner of the screen. Results cannot be downloaded (step 3) until the progress bar is completed and disappears.
 
@@ -80,10 +80,10 @@ Once the 'Calculator' tab is opened, the user will see the IBI calculator interf
 2. Why does my data look strange in the data viewer?
     + You likely have the incorrect Separator or Quote selected. Otherwise, there may be commas in text fields when the comma separator is selected.
 
-3. The IBI calculation is taking forever to calculate, has the app frozen?
+3. The Index calculation is taking forever to calculate, has the app frozen?
     + Even though R works remarkably fast, a large dataset will cause the app to slow down. The estimate is approximately 30 seconds for small datasets; however, this could extend to a few minutes for large datasets.
     
-# Metric Adjustment Factors Instructions
+# Metric Adjustment Download Instructions
 
 ### Foreword
 This tab allows the user to upload station information and assigns natural StreamCat factors. Some metrics are adjusted based on site-specific StreamCat estimates. [(StreamCat)](https://www.epa.gov/national-aquatic-resource-surveys/streamcat-dataset). Note, there are approximately 50 COMIDs in WY with some missing StreamCat data. Missing adjustment factor data will cause IBI scores to be incorrectly calculated. So, we recommend inputing an estimate from a nearby, similarly sized COMID. See Table 2 for additional information on the StreamCat variables. See Table 3 for necessary input fields. For more information on the derivation of these metric adjustment factors, please read the [WDEQ Diatom IBI report](https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports). Note, only COMIDs from the state of Wyoming can be used. If the user would like COMIDs from other, nearby states, please contact Ben Block (Ben.Block@tetratech.com) and he can update the available list.
@@ -131,9 +131,9 @@ table3 %>%
 ```
 
 
-### Metric Adjustment Factors Instructions
+### Metric Adjustment Download Instructions
 
-Once opened, the user will see the metric adjustment factors interface. The user should follow the onscreen instructions as follows:
+Once opened, the user will see the metric adjustment download interface. The user should follow the onscreen instructions as follows:
 
 1. Load file
     + **Default settings work well**. If the user is unsure of how to format the data, simply store as a .csv and use the default load settings.
@@ -150,3 +150,6 @@ Once opened, the user will see the metric adjustment factors interface. The user
 3. Download results
     + Select the button to download a zip file with inputs and results.
     + Check ‘results_log_maf.txt’ for any warnings or messages. Note, some warnings are automatically generated by R. Feel free to reach out to Ben Block (Ben.Block@tetratech.com) for any questions related to warnings.
+    
+4. Combine metric adjustment factor data with taxonomic data for reupload into **Index Calculator**.
+    + The downloaded metric adjustment factor data will need to be merged with taxonomic data (outside of the app) to properly calculate the IBI. For reference, see the structure of the example files [HERE](https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Example_Files).

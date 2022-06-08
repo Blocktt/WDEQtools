@@ -3,26 +3,86 @@
 
 <div id="background" class="section level2">
 <h2>Background</h2>
-<p>This R Shiny application calculates numeric Index of Biotic Integrity (IBI) scores based on diatom samples collected by the Wyoming Department of Environmental Quality (<a href="https://deq.wyoming.gov/">WDEQ</a>).</p>
-<p>WDEQ monitors the conditions of streams and rivers in Wyoming to inform management decisions regarding protection, mitigation, and restoration of aquatic life and other designated uses.The Wyoming Department of Environmental Quality (WDEQ) has diatom assemblage data from nearly 700 river and stream samples collected from 2007 to 2020. WDEQ’s data provide an opportunity to test diatom metrics with independently established disturbance gradients and classification based on natural variability within Wyoming. The IBI consolidates measures of the aquatic community (metrics) that, when combined, indicate the similarity of a biological sample to expected conditions of a well-balanced community. The process by which the metrics are selected and combined in an index follows established and innovative analytical methods of the reference condition approach (<a href="https://link.springer.com/article/10.1007/BF01866767">Hughes et al. 1986</a>, <a href="https://link.springer.com/book/10.1007/978-1-4419-8885-0">Bailey et al. 2004</a>). In this approach, biological conditions that are sampled from relatively undisturbed sites and that account for natural variability are set as a standard (or reference) to which other samples are compared (<a href="https://esajournals.onlinelibrary.wiley.com/doi/10.1890/1051-0761%282006%29016%5B1267%3ASEFTEC%5D2.0.CO%3B2">Stoddard et al. 2006</a>). Using metrics to establish the numeric index scale, IBI values that resemble those found in reference sites are determined to meet the expectations for a well-balanced aquatic community. IBI values that are unlike the reference values indicate departure from the acceptable biological conditions and probable impairment of aquatic life uses.</p>
-<p>The diatom IBI calibration project resulted in an index applicable statewide. Four metrics are adjusted by eight different factors (see Metric Adjustment Factors Tab) that represent natural stream types.Reports detailing the development of the diatom IBI can be found <a href="https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports">here</a>.</p>
+<p>This R Shiny application calculates numeric Index of Biotic Integrity
+(IBI) scores based on diatom samples collected by the Wyoming Department
+of Environmental Quality (<a href="https://deq.wyoming.gov/">WDEQ</a>).</p>
+<p>WDEQ monitors the conditions of streams and rivers in Wyoming to
+inform management decisions regarding protection, mitigation, and
+restoration of aquatic life and other designated uses.The Wyoming
+Department of Environmental Quality (WDEQ) has diatom assemblage data
+from nearly 700 river and stream samples collected from 2007 to 2020.
+WDEQ’s data provide an opportunity to test diatom metrics with
+independently established disturbance gradients and classification based
+on natural variability within Wyoming. The IBI consolidates measures of
+the aquatic community (metrics) that, when combined, indicate the
+similarity of a biological sample to expected conditions of a
+well-balanced community. The process by which the metrics are selected
+and combined in an index follows established and innovative analytical
+methods of the reference condition approach (<a href="https://link.springer.com/article/10.1007/BF01866767">Hughes et
+al. 1986</a>, <a href="https://link.springer.com/book/10.1007/978-1-4419-8885-0">Bailey
+et al. 2004</a>). In this approach, biological conditions that are
+sampled from relatively undisturbed sites and that account for natural
+variability are set as a standard (or reference) to which other samples
+are compared (<a href="https://esajournals.onlinelibrary.wiley.com/doi/10.1890/1051-0761%282006%29016%5B1267%3ASEFTEC%5D2.0.CO%3B2">Stoddard
+et al. 2006</a>). Using metrics to establish the numeric index scale,
+IBI values that resemble those found in reference sites are determined
+to meet the expectations for a well-balanced aquatic community. IBI
+values that are unlike the reference values indicate departure from the
+acceptable biological conditions and probable impairment of aquatic life
+uses.</p>
+<p>The diatom IBI calibration project resulted in an index applicable
+statewide. Four metrics are adjusted by eight different factors (see
+Metric Adjustment Download Tab) that represent natural stream
+types.Reports detailing the development of the diatom IBI can be found
+<a href="https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports">here</a>.</p>
 </div>
 <div id="intended-application" class="section level2">
 <h2>Intended application</h2>
-<p>The purpose of these indices are to describe the diatom community of Wyoming freshwater streams for the purpose of biological condition assessment. A diatom IBI enhances the state of Wyoming’s monitoring and assessment strategy by adding a numeric indicator of diatom community structure that could be used to assess aquatic life use in:</p>
+<p>The purpose of the index is to describe the diatom community of
+Wyoming freshwater streams for the purpose of biological condition
+assessment. A diatom IBI enhances the state of Wyoming’s monitoring and
+assessment strategy by adding a numeric indicator of diatom community
+structure that could be used to assess aquatic life use in:</p>
 <ul>
-<li>WDEQ’s Integrated Report, thus satisfying 305(b) and 303(d) reporting requirements to U.S. EPA.</li>
-<li>Watershed characterization projects which identify critical areas and chemical/physical stressors to the biological communities.</li>
-<li>Identifying improvements in the biological communities following watershed restoration efforts.</li>
+<li>WDEQ’s Integrated Report, thus satisfying 305(b) and 303(d)
+reporting requirements to U.S. EPA.</li>
+<li>Watershed characterization projects which identify critical areas
+and chemical/physical stressors to the biological communities.</li>
+<li>Identifying improvements in the biological communities following
+watershed restoration efforts.</li>
 </ul>
-<p>In addition, a diatom IBI provides an accurate assessment of ecological effects on a third assemblage in Wyoming, which might respond to different stressors than those indicated by the existing fish and macroinvertebrate assemblages, thus improving WDEQ’s diagnostic ability to identify causes of degradation in water quality. Diatoms are typically associated with nutrient availability (<a href="https://www.sciencedirect.com/science/article/abs/pii/S1470160X18306496">Charles et al. 2019</a>) and the diatom IBI might be useful to evaluate direct biological responses to excessive nutrients.</p>
-<p>Streams sampled by the diatom monitoring program were wadeable and perennial. All diatom samples used in the analyses were collected by WDEQ field staff according to the WDEQ Manual of Standard Operating Procedures (<a href="https://deq.wyoming.gov/water-quality/watershed-protection/water-quality-assessment/">WDEQ 2021</a>). Periphyton samples are collected during low flow, from late July through October. If the user applies the indices to samples that do not meet the criteria listed above, results should be interpreted with caution. For more information on sampling methodologies and application limits, see the IBI development reports <a href="https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports">here</a>.</p>
+<p>In addition, a diatom IBI provides an accurate assessment of
+ecological effects on a third assemblage in Wyoming. The diatom IBI
+might respond to different stressors than those indicated by the
+existing fish and macroinvertebrate assemblages, and so, could improve
+WDEQ’s diagnostic ability to identify causes of degradation in water
+quality. Diatoms are typically associated with nutrient availability (<a href="https://www.sciencedirect.com/science/article/abs/pii/S1470160X18306496">Charles
+et al. 2019</a>) and the diatom IBI might be useful to evaluate direct
+biological responses to excessive nutrients.</p>
+<p>Streams sampled by the diatom monitoring program were wadeable and
+perennial. All diatom samples used in the analyses were collected by
+WDEQ field staff according to the WDEQ Manual of Standard Operating
+Procedures (<a href="https://deq.wyoming.gov/water-quality/watershed-protection/water-quality-assessment/">WDEQ
+2021</a>). Periphyton samples are collected during low flow, from late
+July through October. If the user applies the indices to samples that do
+not meet the criteria listed above, results should be interpreted with
+caution. For more information on sampling methodologies and application
+limits, see the IBI development reports <a href="https://github.com/Blocktt/ShinyAppDocuments/tree/main/WDEQtools/Reports">here</a>.</p>
 </div>
 <div id="input-metrics-and-scoring-formulae" class="section level2">
 <h2>Input metrics and scoring formulae</h2>
-<p>The diatom IBI was calibrated for applicability statewide; however, four of the seven metrics are adjusted by metric adjustment factors. The metric adjustment factors represent natural stream types. Table 1 shows the input metrics and scoring formulae for the IBI. See the <strong>“Metric Adjustment Factors”</strong> tab for more information on factors and how to assign factor values to each site.</p>
+<p>The diatom IBI was calibrated for applicability statewide; however,
+four of the seven metrics are adjusted by metric adjustment factors. The
+metric adjustment factors represent natural stream types. Table 1 shows
+the input metrics and scoring formulae for the IBI (metrics in need of
+adjustment have the “_RFadj” suffix). See the <strong>“Metric Adjustment
+Download”</strong> tab for more information on factors and how to assign
+factor values to each site.</p>
 <div id="table-1.-metrics-and-scoring-formulae-for-the-wdeq-diatom-ibis.-de-discrimination-efficiency-trend-metric-response-to-stress-5th-5th-percentile-of-metric-values-and-95th-95th-percentile-of-metric-values." class="section level4">
-<h4>Table 1. Metrics and scoring formulae for the WDEQ Diatom IBIs. DE = discrimination efficiency, Trend = metric response to stress, 5th = 5th percentile of metric values, and 95th = 95th percentile of metric values.</h4>
+<h4>Table 1. Metrics and scoring formulae for the WDEQ Diatom IBIs. DE =
+discrimination efficiency, Trend = metric response to stress, 5th = 5th
+percentile of metric values, and 95th = 95th percentile of metric
+values.</h4>
 <table class="table" style="font-size: 14px; width: auto !important; ">
 <thead>
 <tr>
