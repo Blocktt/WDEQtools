@@ -3,7 +3,7 @@ NEWS-WDEQtools
 
 <!-- NEWS.md is generated from NEWS.Rmd. Please edit that file -->
 
-    #> Last Update: 2022-06-06 09:08:33
+    #> Last Update: 2022-06-10 10:28:46
 
 # WDEQtools v0.0.1.9142 (2022-06-03)
 
