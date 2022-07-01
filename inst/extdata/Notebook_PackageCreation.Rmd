@@ -1,4 +1,4 @@
-~---
+---
 title: "Notebook, WDEQtools"
 output: html_notebook
 editor_options: 
